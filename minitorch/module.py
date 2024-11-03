@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from typing import Any, Dict, Optional, Sequence, Tuple
+from collections import deque
 
 
 class Module:
@@ -32,12 +33,46 @@ class Module:
     def train(self) -> None:
         """Set the mode of this module and all descendent modules to `train`."""
         # TODO: Implement for Task 0.4.
-        raise NotImplementedError("Need to implement for Task 0.4")
+        self.training = True
+        visited = set()
+        queue = deque([("", self)])
+        # print(self._modules.items())
+        while queue:
+            node = queue.popleft()
+            if node not in visited:
+                visited.add(node)
+                node[1].training = True
+                queue.extend(
+                    [
+                        (".".join([node[0], module_name]).lstrip("."), module)
+                        for module_name, module in node[1]._modules.items()
+                        if (module_name, module) not in visited
+                    ]
+                )
+        # for key in self._modules.keys():
+        #     self._modules[key].training = True
 
     def eval(self) -> None:
         """Set the mode of this module and all descendent modules to `eval`."""
         # TODO: Implement for Task 0.4.
-        raise NotImplementedError("Need to implement for Task 0.4")
+        self.training = False
+        visited = set()
+        queue = deque([("", self)])
+        # print(self._modules.items())
+        while queue:
+            node = queue.popleft()
+            if node not in visited:
+                visited.add(node)
+                node[1].training = False
+                queue.extend(
+                    [
+                        (".".join([node[0], module_name]).lstrip("."), module)
+                        for module_name, module in node[1]._modules.items()
+                        if (module_name, module) not in visited
+                    ]
+                )
+        # for key in self._modules.keys():
+        #     self._modules[key].training = False
 
     def named_parameters(self) -> Sequence[Tuple[str, Parameter]]:
         """Collect all the parameters of this module and its descendents.
@@ -48,12 +83,50 @@ class Module:
 
         """
         # TODO: Implement for Task 0.4.
-        raise NotImplementedError("Need to implement for Task 0.4")
+        visited = set()
+        queue = deque([("", self)])
+        pars_list = []
+        # print(self._modules.items())
+        while queue:
+            node = queue.popleft()
+            if node not in visited:
+                visited.add(node)
+                node_parameters_list = list(node[1]._parameters.items())
+                for name, pars in node_parameters_list:
+                    pars_list.append((".".join([node[0], name]).lstrip("."), pars))
+                queue.extend(
+                    [
+                        (".".join([node[0], module_name]).lstrip("."), module)
+                        for module_name, module in node[1]._modules.items()
+                        if (module_name, module) not in visited
+                    ]
+                )
+
+        return pars_list
 
     def parameters(self) -> Sequence[Parameter]:
         """Enumerate over all the parameters of this module and its descendents."""
         # TODO: Implement for Task 0.4.
-        raise NotImplementedError("Need to implement for Task 0.4")
+        visited = set()
+        queue = deque([("", self)])
+        pars_list = []
+        # print(self._modules.items())
+        while queue:
+            node = queue.popleft()
+            if node not in visited:
+                visited.add(node)
+                node_parameters_list = list(node[1]._parameters.items())
+                for name, pars in node_parameters_list:
+                    pars_list.append(pars)
+                queue.extend(
+                    [
+                        (".".join([node[0], module_name]).lstrip("."), module)
+                        for module_name, module in node[1]._modules.items()
+                        if (module_name, module) not in visited
+                    ]
+                )
+
+        return pars_list
 
     def add_parameter(self, k: str, v: Any) -> Parameter:
         """Manually add a parameter. Useful helper for scalar parameters.
