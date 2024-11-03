@@ -92,7 +92,7 @@ def log_back(a, b):
 
 
 def inv_back(a, b):
-    return -b / (a ** 2)
+    return -b / (a**2)
 
 
 def relu_back(a, b):

@@ -3,6 +3,7 @@ from __future__ import annotations
 from typing import Any, Dict, Optional, Sequence, Tuple
 from collections import deque
 
+
 class Module:
     """Modules form a tree that store parameters and other
     submodules. They make up the basis of neural network stacks.
@@ -34,15 +35,20 @@ class Module:
         # TODO: Implement for Task 0.4.
         self.training = True
         visited = set()
-        queue = deque([('', self)])
+        queue = deque([("", self)])
         # print(self._modules.items())
         while queue:
             node = queue.popleft()
             if node not in visited:
                 visited.add(node)
                 node[1].training = True
-                queue.extend([('.'.join([node[0], module_name]).lstrip('.'), module) for module_name, module in
-                              node[1]._modules.items() if (module_name, module) not in visited])
+                queue.extend(
+                    [
+                        (".".join([node[0], module_name]).lstrip("."), module)
+                        for module_name, module in node[1]._modules.items()
+                        if (module_name, module) not in visited
+                    ]
+                )
         # for key in self._modules.keys():
         #     self._modules[key].training = True
 
@@ -51,15 +57,20 @@ class Module:
         # TODO: Implement for Task 0.4.
         self.training = False
         visited = set()
-        queue = deque([('', self)])
+        queue = deque([("", self)])
         # print(self._modules.items())
         while queue:
             node = queue.popleft()
             if node not in visited:
                 visited.add(node)
                 node[1].training = False
-                queue.extend([('.'.join([node[0], module_name]).lstrip('.'), module) for module_name, module in
-                              node[1]._modules.items() if (module_name, module) not in visited])
+                queue.extend(
+                    [
+                        (".".join([node[0], module_name]).lstrip("."), module)
+                        for module_name, module in node[1]._modules.items()
+                        if (module_name, module) not in visited
+                    ]
+                )
         # for key in self._modules.keys():
         #     self._modules[key].training = False
 
@@ -73,7 +84,7 @@ class Module:
         """
         # TODO: Implement for Task 0.4.
         visited = set()
-        queue = deque([('', self)])
+        queue = deque([("", self)])
         pars_list = []
         # print(self._modules.items())
         while queue:
@@ -82,8 +93,14 @@ class Module:
                 visited.add(node)
                 node_parameters_list = list(node[1]._parameters.items())
                 for name, pars in node_parameters_list:
-                    pars_list.append(('.'.join([node[0], name]).lstrip('.'), pars))
-                queue.extend([('.'.join([node[0], module_name]).lstrip('.'), module) for module_name, module in node[1]._modules.items() if (module_name, module) not in visited])
+                    pars_list.append((".".join([node[0], name]).lstrip("."), pars))
+                queue.extend(
+                    [
+                        (".".join([node[0], module_name]).lstrip("."), module)
+                        for module_name, module in node[1]._modules.items()
+                        if (module_name, module) not in visited
+                    ]
+                )
 
         return pars_list
 
@@ -91,7 +108,7 @@ class Module:
         """Enumerate over all the parameters of this module and its descendents."""
         # TODO: Implement for Task 0.4.
         visited = set()
-        queue = deque([('', self)])
+        queue = deque([("", self)])
         pars_list = []
         # print(self._modules.items())
         while queue:
@@ -101,8 +118,13 @@ class Module:
                 node_parameters_list = list(node[1]._parameters.items())
                 for name, pars in node_parameters_list:
                     pars_list.append(pars)
-                queue.extend([('.'.join([node[0], module_name]).lstrip('.'), module) for module_name, module in
-                              node[1]._modules.items() if (module_name, module) not in visited])
+                queue.extend(
+                    [
+                        (".".join([node[0], module_name]).lstrip("."), module)
+                        for module_name, module in node[1]._modules.items()
+                        if (module_name, module) not in visited
+                    ]
+                )
 
         return pars_list
 

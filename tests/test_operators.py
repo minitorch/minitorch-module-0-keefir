@@ -120,7 +120,7 @@ def test_sigmoid(a: float) -> None:
 def test_transitive(a: float, b: float, c: float) -> None:
     """Test the transitive property of less-than (a < b and b < c implies a < c)"""
     # TODO: Implement for Task 0.2.
-    assert a < c if a < b < c else True
+    assert lt(a, c) if lt(a, b) and lt(b, c) else True
 
 
 @pytest.mark.task0_2
@@ -147,7 +147,7 @@ def test_distribute(a: float, b: float, c: float) -> None:
 def test_other() -> None:
     """Write a test that ensures some other property holds for your functions."""
     # TODO: Implement for Task 0.2.
-    raise NotImplementedError("Need to implement for Task 0.2")
+    assert eq(add(2, 2), mul(2, 2))
 
 
 # ## Task 0.3  - Higher-order functions
@@ -175,8 +175,10 @@ def test_sum_distribute(ls1: List[float], ls2: List[float]) -> None:
     is the same as the sum of each element of `ls1` plus each element of `ls2`.
     """
     # TODO: Implement for Task 0.3.
-    assert_close(add(minitorch.operators.sum(ls1), minitorch.operators.sum(ls2)),
-                 minitorch.operators.sum(addLists(ls1, ls2)))
+    assert_close(
+        add(minitorch.operators.sum(ls1), minitorch.operators.sum(ls2)),
+        minitorch.operators.sum(addLists(ls1, ls2)),
+    )
 
 
 @pytest.mark.task0_3
@@ -217,7 +219,7 @@ def test_one_args(fn: Tuple[str, Callable[[float], float]], t1: float) -> None:
 @given(small_floats, small_floats)
 @pytest.mark.parametrize("fn", two_arg)
 def test_two_args(
-        fn: Tuple[str, Callable[[float, float], float]], t1: float, t2: float
+    fn: Tuple[str, Callable[[float, float], float]], t1: float, t2: float
 ) -> None:
     name, base_fn = fn
     base_fn(t1, t2)
